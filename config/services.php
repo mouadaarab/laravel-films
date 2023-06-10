@@ -30,5 +30,11 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
+    'themoviedb' => [
+        'api_key' => env('THEMOVIEDB_API_KEY'),
+        'api_url' => env('THEMOVIEDB_API_URL'),
+        // 'api_image_url' => env('THEMOVIEDB_API_IMAGE_URL'),
+        // 'api_image_size' => env('THEMOVIEDB_API_IMAGE_SIZE'),
+    ]
 
 ];
