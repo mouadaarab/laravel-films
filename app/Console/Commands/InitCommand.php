@@ -26,9 +26,11 @@ class InitCommand extends Command
     public function handle()
     {
         // Run artisan migrate command
+        $this->info('Run artisan migrate command');
         $this->call('migrate:fresh');
 
         // Run artisan db:seed command
+        $this->info('Run artisan db:seed command');
         $this->call('db:seed');
     }
 }

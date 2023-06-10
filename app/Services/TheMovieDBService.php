@@ -8,13 +8,29 @@ use Illuminate\Support\Facades\Http;
 
 class TheMovieDBService
 {
+    /**
+     * http
+     *
+     * @var mixed
+     */
     protected $http;
+
+    /**
+     * __construct
+     *
+     * @return void
+     */
     public function __construct()
     {
         $this->http = Http::withToken(config('services.themoviedb.api_key'))
                         ->baseUrl(config('services.themoviedb.api_url'));
     }
 
+    /**
+     * syncGenres
+     *
+     * @return void
+     */
     public function syncGenres(): void
     {
         $response = $this->http->get($this->addLanguageParamToUrl('/genre/movie/list'));
@@ -29,16 +45,30 @@ class TheMovieDBService
         }
     }
 
-    public function syncFilms(): void
+    /**
+     * syncTrendingFilms
+     *
+     * @param  mixed $timeWindow
+     * @return void
+     */
+    public function syncTrendingFilms($timeWindow): void
     {
-        $response = $this->http->get($this->addLanguageParamToUrl('/movie/popular'));
+        $response = $this->http->get($this->addLanguageParamToUrl('/trending/movie/' . $timeWindow));
         $response->throw();
         $films = $response->json()['results'];
         foreach ($films as $film) {
-            $this->createOrUpdateFilm($film);
+            $this->createOrUpdateFilm($film, $timeWindow);
         }
+
+        $this->removeOldTrendingFilms($films, $timeWindow);
     }
 
+    /**
+     * addLanguageParamToUrl
+     *
+     * @param  mixed $url
+     * @return string
+     */
     private function addLanguageParamToUrl(string $url): string
     {
         $language = app()->getLocale();
@@ -46,10 +76,18 @@ class TheMovieDBService
     }
 
 
-    protected function createOrUpdateFilm(array $film): void
+    /**
+     * createOrUpdateFilm
+     *
+     * @param  mixed $film
+     * @param  mixed $timeWindow
+     * @return void
+     */
+    protected function createOrUpdateFilm(array $film, $timeWindow): void
     {
-        $filmModel = Film::firstOrNew(['themoviedb_id' => $film['id']]);
-        $filmModel->fill([
+        $dbFilm = Film::updateOrCreate([
+            'themoviedb_id' => $film['id'],
+        ], [
             'adult' => $film['adult'],
             'backdrop_path' => $film['backdrop_path'],
             'title' => $film['title'],
@@ -60,15 +98,39 @@ class TheMovieDBService
             'video' => $film['video'],
             'vote_average' => $film['vote_average'],
             'vote_count' => $film['vote_count'],
+            'trending_' . $timeWindow => true,
         ]);
-        $filmModel->save();
 
-        $ids = Genre::query()
-            ->whereIn('themoviedb_id', $film['genre_ids'])
-            ->pluck('id')
-            ->toArray();
-        $filmModel->genres()->sync($ids);
+        $this->syncGenresForFilm($dbFilm, $film['genre_ids']);
+    }
 
+    /**
+     * syncGenresForFilm
+     *
+     * @param  mixed $film
+     * @param  mixed $genreIds
+     * @return void
+     */
+    protected function syncGenresForFilm(Film $film, array $genreIds): void
+    {
+        $genres = Genre::whereIn('themoviedb_id', $genreIds)->get();
+        $film->genres()->sync($genres);
+    }
 
+    /**
+     * removeOldTrendingFilms
+     *
+     * @param  mixed $films
+     * @param  mixed $timeWindow
+     * @return void
+     */
+    protected function removeOldTrendingFilms(array $films, $timeWindow): void
+    {
+        $filmIds = array_column($films, 'id');
+        Film::where('trending_' . $timeWindow, true)
+            ->whereNotIn('themoviedb_id', $filmIds)
+            ->update([
+                'trending_' . $timeWindow => false,
+            ]);
     }
 }

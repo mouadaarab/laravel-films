@@ -22,16 +22,27 @@ class Film extends Model
         'vote_average',
         'vote_count',
         'genre_id',
+        'trending_week',
+        'trending_day',
     ];
 
     protected $casts = [
         'adult' => 'boolean',
         'video' => 'boolean',
         'release_date' => 'date',
+        'vote_average' => 'float',
+        'vote_count' => 'integer',
+        'trending_week' => 'boolean',
+        'trending_day' => 'boolean',
     ];
 
     public function genres()
     {
         return $this->belongsToMany(Genre::class)->withTimestamps();
+    }
+
+    public function scopeTrending($query, $timeWindow)
+    {
+        return $query->where('trending_' . $timeWindow, true);
     }
 }

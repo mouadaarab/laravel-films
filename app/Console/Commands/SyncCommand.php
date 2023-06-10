@@ -26,7 +26,15 @@ class SyncCommand extends Command
      */
     public function handle(TheMovieDBService $theMovieDBService)
     {
+        $this->info('Sync film genres');
         $theMovieDBService->syncGenres();
-        $theMovieDBService->syncFilms();
+
+        $this->info('Sync day trending films');
+        $theMovieDBService->syncTrendingFilms('day');
+
+        $this->info('Sync week trending films');
+        $theMovieDBService->syncTrendingFilms('week');
+
+        $this->info('Sync films done!');
     }
 }
