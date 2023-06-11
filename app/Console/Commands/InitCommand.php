@@ -11,7 +11,7 @@ class InitCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'app:init';
+    protected $signature = 'app:init {--sync-data=}';
 
     /**
      * The console command description.
@@ -32,5 +32,12 @@ class InitCommand extends Command
         // Run artisan db:seed command
         $this->info('Run artisan db:seed command');
         $this->call('db:seed');
+
+        // Run artisan app:sync command
+        if ($this->option('sync-data') == 'true') {
+            $this->info('Run artisan app:sync command');
+            $this->call('app:sync');
+        }
+
     }
 }
