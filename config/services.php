@@ -35,6 +35,7 @@ return [
         'api_url' => env('THEMOVIEDB_API_URL'),
         'backdrop_image_url' => env('THEMOVIEDB_BACKDROP_IMAGE_URL'),
         'poster_image_url' => env('THEMOVIEDB_POSTER_IMAGE_URL'),
+        'profile_image_url' => env('THEMOVIEDB_PROFILE_IMAGE_URL'),
     ]
 
 ];

@@ -85,22 +85,28 @@ class TheMovieDBService
      */
     protected function createOrUpdateFilm(array $film, $timeWindow): void
     {
-        $dbFilm = Film::updateOrCreate([
-            'themoviedb_id' => $film['id'],
-        ], [
-            'adult' => $film['adult'],
-            'backdrop_path' => $film['backdrop_path'],
-            'title' => $film['title'],
-            'original_language' => $film['original_language'],
-            'original_title' => $film['original_title'],
-            'overview' => $film['overview'],
-            'poster_path' => $film['poster_path'],
-            'release_date' => $film['release_date'],
-            'video' => $film['video'],
-            'vote_average' => $film['vote_average'],
-            'vote_count' => $film['vote_count'],
-            'trending_' . $timeWindow => true,
-        ]);
+        $dbFilm = Film::where('themoviedb_id', $film['id'])->withTrashed()->first();
+        if(!$dbFilm){
+            $dbFilm = Film::create([
+                'themoviedb_id' => $film['id'],
+                'title' => $film['title'],
+                'overview' => $film['overview'],
+                'poster_path' => $film['poster_path'],
+                'backdrop_path' => $film['backdrop_path'],
+                'release_date' => $film['release_date'],
+                'vote_average' => $film['vote_average'],
+                'vote_count' => $film['vote_count'],
+                'popularity' => $film['popularity'],
+                'trending_' . $timeWindow => true,
+            ]);
+        }else{
+            $dbFilm->update([
+                'vote_average' => $film['vote_average'],
+                'vote_count' => $film['vote_count'],
+                'popularity' => $film['popularity'],
+                'trending_' . $timeWindow => true,
+            ]);
+        }
 
         $this->syncGenresForFilm($dbFilm, $film['genre_ids']);
     }
@@ -133,5 +139,45 @@ class TheMovieDBService
             ->update([
                 'trending_' . $timeWindow => false,
             ]);
+    }
+
+    /**
+     * getFilm
+     *
+     * @param  mixed $filmId
+     * @return array
+     */
+    public function getFilm(int $filmId): array
+    {
+        $response = $this->http->get($this->addLanguageParamToUrl('/movie/' . $filmId));
+        $response->throw();
+        return $response->json();
+    }
+
+    /**
+     * getFilmCredits
+     *
+     * @param  mixed $filmId
+     * @return array
+     */
+    public function getFilmCredits(int $filmId): array
+    {
+        $response = $this->http->get($this->addLanguageParamToUrl('/movie/' . $filmId . '/credits'));
+        $response->throw();
+        return $response->json();
+    }
+
+
+    /**
+     * getFilmVideos
+     *
+     * @param  mixed $filmId
+     * @return \Illuminate\Support\Collection
+     */
+    public function getFilmVideos(int $filmId): \Illuminate\Support\Collection
+    {
+        $response = $this->http->get($this->addLanguageParamToUrl('/movie/' . $filmId . '/videos'));
+        $response->throw();
+        return collect($response->json()['results']);
     }
 }

@@ -2,12 +2,17 @@
 
 namespace App\Models;
 
+use App\Classes\Person;
+use App\Services\TheMovieDBService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Film extends Model
 {
     use HasFactory;
+    use SoftDeletes;
+
     protected $fillable = [
         'adult',
         'backdrop_path',
@@ -69,5 +74,33 @@ class Film extends Model
     public function getGenresListAttribute()
     {
         return $this->genres->pluck('name')->implode(', ');
+    }
+
+    public function getYoutubeTrailerAttribute(){
+        $youtubeTrailerVideo = app(TheMovieDBService::class)
+            ->getFilmVideos($this->themoviedb_id)
+            ->where('site', 'YouTube')
+            ->where('type', 'Trailer')
+            ->first();
+
+        if($youtubeTrailerVideo){
+            return 'https://www.youtube.com/embed/' . $youtubeTrailerVideo['key'];
+        }
+
+        return null;
+    }
+
+    public function getCastsAttribute(){
+        $casts = app(TheMovieDBService::class)
+            ->getFilmCredits($this->themoviedb_id)['cast'];
+
+        return Person::collection($casts);
+    }
+
+    public function getCrewsAttribute(){
+        $crews = app(TheMovieDBService::class)
+            ->getFilmCredits($this->themoviedb_id)['crew'];
+
+        return Person::collection($crews);
     }
 }

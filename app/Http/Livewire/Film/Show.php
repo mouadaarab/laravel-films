@@ -9,6 +9,9 @@ class Show extends Component
 {
     public Film $film;
     public $updateFilmModal;
+    public $trailerModal;
+    public $confirmingFilmDeletionModal;
+
 
     protected $rules = [
         'film.title' => 'required|string|min:6',
@@ -23,6 +26,11 @@ class Show extends Component
         return view('livewire.film.show');
     }
 
+    public function mount(Film $film)
+    {
+        $this->film = $film;
+    }
+
     public function save()
     {
         $this->validate();
@@ -34,6 +42,28 @@ class Show extends Component
     public function delete()
     {
         $this->film->delete();
-        $this->emit('deleted');
+        return redirect()->route('films.trending');
+    }
+
+    public function openUpdateFilmModal()
+    {
+        $this->updateFilmModal = true;
+    }
+
+    public function closeUpdateFilmModal()
+    {
+        $this->updateFilmModal = false;
+    }
+
+    public function openTrailerModal()
+    {
+        $this->trailerModal = true;
+        $this->emit('trailerStart');
+    }
+
+    public function closeTrailerModal()
+    {
+        $this->trailerModal = false;
+        $this->emit('trailerStop');
     }
 }
