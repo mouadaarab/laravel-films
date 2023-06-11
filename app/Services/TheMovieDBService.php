@@ -93,6 +93,7 @@ class TheMovieDBService
             'title' => $film['title'],
             'original_language' => $film['original_language'],
             'original_title' => $film['original_title'],
+            'overview' => $film['overview'],
             'poster_path' => $film['poster_path'],
             'release_date' => $film['release_date'],
             'video' => $film['video'],

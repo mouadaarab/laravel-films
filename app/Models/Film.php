@@ -15,7 +15,7 @@ class Film extends Model
         'title',
         'original_language',
         'original_title',
-        'original_title',
+        'overview',
         'poster_path',
         'release_date',
         'video',
@@ -44,5 +44,30 @@ class Film extends Model
     public function scopeTrending($query, $timeWindow)
     {
         return $query->where('trending_' . $timeWindow, true);
+    }
+
+
+    public function getBackdropUrlAttribute()
+    {
+        return $this->backdrop_path
+            ? config('services.themoviedb.backdrop_image_url') . $this->backdrop_path
+            : 'https://via.placeholder.com/1280x720.png?text=No+Image';
+    }
+
+    public function getPosterUrlAttribute()
+    {
+        return $this->poster_path
+            ? config('services.themoviedb.poster_image_url') . $this->poster_path
+            : 'https://via.placeholder.com/500x750.png?text=No+Image';
+    }
+
+    public function getReleaseYearAttribute()
+    {
+        return $this->release_date->format('Y');
+    }
+
+    public function getGenresListAttribute()
+    {
+        return $this->genres->pluck('name')->implode(', ');
     }
 }

@@ -25,7 +25,8 @@ return new class extends Migration
             $table->boolean('video')->nullable();
             $table->float('vote_average')->nullable();
             $table->integer('vote_count')->nullable();
-            $table->unsignedBigInteger('genre_id')->nullable();
+            $table->boolean('trending_day')->default(false);
+            $table->boolean('trending_week')->default(false);
             $table->timestamps();
         });
     }
