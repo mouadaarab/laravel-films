@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Livewire\Home\Dashboard;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,7 +20,9 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified'
 ])->group(function () {
-    Route::get('/', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/', Dashboard::class)->name('dashboard');
+    Route::prefix('films')->group(function(){
+        Route::get('trending', \App\Http\Livewire\Film\Trending::class)->name('films.trending');
+        Route::get('{film}', \App\Http\Livewire\Film\Show::class)->name('films.show');
+    });
 });

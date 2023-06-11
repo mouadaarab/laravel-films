@@ -33,8 +33,9 @@ return [
     'themoviedb' => [
         'api_key' => env('THEMOVIEDB_API_KEY'),
         'api_url' => env('THEMOVIEDB_API_URL'),
-        // 'api_image_url' => env('THEMOVIEDB_API_IMAGE_URL'),
-        // 'api_image_size' => env('THEMOVIEDB_API_IMAGE_SIZE'),
+        'backdrop_image_url' => env('THEMOVIEDB_BACKDROP_IMAGE_URL'),
+        'poster_image_url' => env('THEMOVIEDB_POSTER_IMAGE_URL'),
+        'profile_image_url' => env('THEMOVIEDB_PROFILE_IMAGE_URL'),
     ]
 
 ];
