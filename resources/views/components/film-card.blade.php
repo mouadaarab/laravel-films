@@ -39,8 +39,7 @@
         </div>
 
         <div class="flex gap-x-2">
-            <a class="mt-4 text-base w-1/3 text-white bg-indigo-600 py-2 rounded-md shadow-md text-center" href="{{ route('films.show', ['film' => $film]) }}">{{ __('Show Details') }}</a>
-            <button class="mt-4 text-base w-1/3 text-white bg-gray-400 py-2 rounded-md shadow-md">{{ __('Edit') }}</button>
+            <a class="mt-4 text-base w-1/3 text-white bg-indigo-600 py-2 rounded-md shadow-md text-center" href="{{ route('films.show', ['film' => $film]) }}">{{ __('Details') }}</a>
         </div>
     </div>
 </div>
