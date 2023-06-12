@@ -19,31 +19,31 @@
                     <div class="col-span-12 sm:col-span-12">
                         <x-label for="title" value="{{ __('Title') }}" />
                         <x-input id="title" type="text" class="mt-1 block w-full" wire:model.defer="film.title" />
-                        <x-input-error for="title" class="mt-2" />
+                        <x-input-error for="film.title" class="mt-2" />
                     </div>
 
                     <div class="col-span-12 sm:col-span-12">
                         <x-label for="original_title" value="{{ __('Original Title') }}" />
                         <x-input id="original_title" type="text" class="mt-1 block w-full" wire:model="film.original_title" />
-                        <x-input-error for="original_title" class="mt-2" />
+                        <x-input-error for="film.original_title" class="mt-2" />
                     </div>
 
                     <div class="col-span-12 sm:col-span-12">
                         <x-label for="overview" value="{{ __('Overview') }}" />
                         <x-textarea id="overview" type="text" class="mt-1 block w-full" wire:model="film.overview" rows="8" />
-                        <x-input-error for="overview" class="mt-2" />
+                        <x-input-error for="film.overview" class="mt-2" />
                     </div>
 
                     <div class="col-span-4 sm:col-span-6">
                         <x-label for="trending_day" value="{{ __('Trending Day') }}" />
                         <x-checkbox id="trending_day" wire:model="film.trending_day" />
-                        <x-input-error for="trending_day" class="mt-2" />
+                        <x-input-error for="film.trending_day" class="mt-2" />
                     </div>
 
                     <div class="col-span-4 sm:col-span-6">
                         <x-label for="trending_week" value="{{ __('Trending Week') }}" />
                         <x-checkbox id="trending_week" wire:model="film.trending_week" />
-                        <x-input-error for="trending_week" class="mt-2" />
+                        <x-input-error for="film.trending_week" class="mt-2" />
                     </div>
                 </x-slot>
 
