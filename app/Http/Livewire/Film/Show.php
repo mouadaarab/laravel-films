@@ -2,7 +2,9 @@
 
 namespace App\Http\Livewire\Film;
 
+use App\Http\Requests\UpdateFilmRequest;
 use App\Models\Film;
+use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
 
 class Show extends Component
@@ -12,14 +14,9 @@ class Show extends Component
     public $trailerModal;
     public $confirmingFilmDeletionModal;
 
-
-    protected $rules = [
-        'film.title' => 'required|string|min:6',
-        'film.original_title' => 'required|string|min:6',
-        'film.overview' => 'required|string|min:6',
-        'film.trending_day' => 'required|boolean',
-        'film.trending_week' => 'required|boolean',
-    ];
+    protected function rules(){
+        return (new UpdateFilmRequest())->rules();
+    }
 
     public function render()
     {
@@ -33,8 +30,8 @@ class Show extends Component
 
     public function save()
     {
-        $this->validate();
-        $this->film->save();
+        $validated = Validator::make(['film' => $this->film->attributesToArray()], $this->rules())->validate();
+        $this->film->update($validated);
         $this->emit('saved');
         $this->updateFilmModal = false;
     }
